@@ -9,17 +9,17 @@ r = sr.Recognizer()
 
 # a function to recognize speech in the audio file
 # so that we don't repeat ourselves in in other functions
-def transcribe_audio(path):
+def transcribe_audio(path, lang):
     # use the audio file as the audio source
     with sr.AudioFile(path) as source:
         audio_listened = r.record(source)
         # try converting it to text
-        text = r.recognize_google(audio_listened)
+        text = r.recognize_google(audio_listened, language = lang)
     return text
 
 # a function that splits the audio file into chunks on silence
 # and applies speech recognition
-def get_large_audio_transcription_on_silence(path):
+def get_large_audio_transcription_on_silence(path, lang = "en-US"):
     """Splitting the large audio file into chunks
     and apply speech recognition on each of these chunks"""
     # open the audio file using pydub
@@ -47,7 +47,7 @@ def get_large_audio_transcription_on_silence(path):
         audio_chunk.export(chunk_filename, format=format)
         # recognize the chunk
         try:
-            text = transcribe_audio(chunk_filename)
+            text = transcribe_audio(chunk_filename, lang)
         except sr.UnknownValueError as e:
             print("Error:", str(e))
         else:
@@ -57,6 +57,8 @@ def get_large_audio_transcription_on_silence(path):
     # return the text for all chunks detected
     return whole_text
 
-path = "/Users/glorisonlai/Desktop/eng.m4a"
-print("\nFull text:", get_large_audio_transcription_on_silence(path))
+# path = "/Users/glorisonlai/Desktop/eng.m4a"
+# path = "/Users/glorisonlai/Desktop/ch2.m4a"
+path = "/Users/glorisonlai/Desktop/hk2.m4a"
+print("\nFull text:", get_large_audio_transcription_on_silence(path, "yue-Hant-HK"))
 
